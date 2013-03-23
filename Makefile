@@ -435,6 +435,10 @@ shp/vi/states.shp: shp/us/states.shp
 shp/%/counties.shp: shp/us/counties.shp
 	mkdir -p $(dir $@) && rm -f $@ && ogr2ogr -f 'ESRI Shapefile' -where "STATE = '`echo $* | tr a-z A-Z`'" $@ $<
 
+# Some lakes are on state borders so they will be hypenated
+shp/%/lakes.shp: shp/us/waterbodies.shp
+	mkdir -p $(dir $@) && rm -f $@ && ogr2ogr -f 'ESRI Shapefile' -where "FEATURE = 'Lake' AND STATE LIKE '%`echo $* | tr a-z A-Z`%'" $@ $<
+
 # For individual states:
 # - remove duplicate state geometries (e.g., Great Lakes)
 topo/%-states.json: shp/%/states.shp
